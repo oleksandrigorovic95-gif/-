@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АвтоТрекер</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1 id="car-name-display">Моє Авто</h1>
+            <div class="car-input-group">
+                <input type="text" id="car-name-input" placeholder="Введіть марку авто (напр., BMW X5)">
+                <button id="save-car-btn">Зберегти</button>
+            </div>
+        </header>
+
+        <hr>
+
+        <section class="odometer-section">
+            <h2>Поточний пробіг: <span id="current-mileage">0</span> км</h2>
+            <div class="mileage-input-group">
+                <input type="number" id="mileage-input" placeholder="Введіть новий пробіг (км)">
+                <button id="update-mileage-btn">Оновити пробіг</button>
+            </div>
+        </section>
+
+        <hr>
+
+        <section class="maintenance-section">
+            <h2>Останнє ТО</h2>
+            <div id="maintenance-info" style="background: #f0f0f0; padding: 10px; margin-bottom: 15px; border-radius: 5px; color: black;">
+                <p><strong>Пробіг на ТО:</strong> <span id="last-to-mileage">—</span> км</p>
+                <p><strong>Мастило:</strong> <span id="last-to-oil">—</span></p>
+                <p><strong>Фільтр салону:</strong> <span id="last-to-cabin">—</span></p>
+                <p><strong>Повітряний фільтр:</strong> <span id="last-to-air">—</span></p>
+            </div>
+
+            <button id="open-history-btn" style="background-color: #74c69d; margin-bottom: 20px;">📜 Переглянути історію ТО</button>
+
+            <h3>Записати нове ТО</h3>
+            <div class="to-form" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px;">
+                <input type="number" id="to-mileage-input" placeholder="Пробіг на момент ТО (км)">
+                <input type="text" id="to-oil-input" placeholder="Яке мастило залили?">
+                
+                <label>
+                    <input type="checkbox" id="to-cabin-checkbox"> Заміна фільтра салону
+                </label>
+                <label>
+                    <input type="checkbox" id="to-air-checkbox"> Заміна повітряного filtra
+                </label>
+                
+                <button id="save-to-btn">Зберегти дані ТО</button>
+            </div>
+        </section>
+    </div>
+
+    <div id="history-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn">&times;</span>
+            <h2>Історія технічного обслуговування</h2>
+            <div id="history-list">
+                <p style="color: #c4c4cc;">Історія порожня...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
