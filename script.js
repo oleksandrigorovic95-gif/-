@@ -41,7 +41,7 @@ window.addEventListener('DOMContentLoaded', function() {
         garage = JSON.parse(savedGarage);
     }
 
-    // Якщо в гаражі пусто, створюємо першу дефолтну машину
+    // Якщо в гаражі порожньо, створюємо першу дефолтну машину
     if (garage.length === 0) {
         const defaultCar = createNewCarObject("Моє Авто");
         garage.push(defaultCar);
@@ -80,7 +80,11 @@ function loadCurrentCarData() {
     const car = garage.find(c => c.id === currentCarId);
     if (!car) return;
 
-    carNameDisplay.textContent = car.name;
+    // Встановлюємо назву машини вгорі екрана
+    if (carNameDisplay) {
+        carNameDisplay.textContent = car.name;
+    }
+    
     currentMileageDisplay.textContent = car.mileage;
     lastToMileage.textContent = car.toMileage;
     lastToOil.textContent = car.toOil;
@@ -123,7 +127,7 @@ function renderGarageMenu() {
         item.className = `car-menu-item ${car.id === currentCarId ? 'active' : ''}`;
         
         item.innerHTML = `
-            <span class="car-select-click" style="flex: 1;">🚗 ${car.name}</span>
+            <span class="car-select-click" style="flex: 1; cursor: pointer;">🚗 ${car.name}</span>
             ${garage.length > 1 ? `<button class="delete-car-btn" onclick="deleteCar(event, ${car.id})">🗑️</button>` : ''}
         `;
 
@@ -153,7 +157,7 @@ window.deleteCar = function(event, id) {
 };
 
 // ==========================================
-// 3. ЗМІНА НАЗВИ АВТО (ВИПРАВЛЕНО ДЛЯ ГАРАЖА)
+// 3. ЗМІНА НАЗВИ АВТО
 // ==========================================
 document.getElementById('edit-car-name-btn').addEventListener('click', () => {
     const car = garage.find(c => c.id === currentCarId);
@@ -172,7 +176,9 @@ saveCarBtn.addEventListener('click', function() {
         if (car) {
             car.name = newName;
         }
-        carNameDisplay.textContent = newName;
+        if (carNameDisplay) {
+            carNameDisplay.textContent = newName;
+        }
         saveGarageToStorage();
         renderGarageMenu();
         carNameInput.value = "";
