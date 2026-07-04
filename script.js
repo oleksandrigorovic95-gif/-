@@ -4,6 +4,7 @@
 let garage = []; 
 let currentCarId = null; 
 
+// Посилання на елементи головного екрана
 const carNameDisplay = document.getElementById('car-name-display');
 const currentMileageDisplay = document.getElementById('current-mileage');
 const lastToMileage = document.getElementById('last-to-mileage');
@@ -11,12 +12,27 @@ const lastToOil = document.getElementById('last-to-oil');
 const lastToCabin = document.getElementById('last-to-cabin');
 const lastToAir = document.getElementById('last-to-air');
 
+// Посилання на форми введення
+const carNameInput = document.getElementById('car-name-input');
+const mileageInput = document.getElementById('mileage-input');
+const toMileageInput = document.getElementById('to-mileage-input');
+const toOilInput = document.getElementById('to-oil-input');
+const toCabinCheckbox = document.getElementById('to-cabin-checkbox');
+const toAirCheckbox = document.getElementById('to-air-checkbox');
+
+// Кнопки
+const saveCarBtn = document.getElementById('save-car-btn');
+const updateMileageBtn = document.getElementById('update-mileage-btn');
+const saveToBtn = document.getElementById('save-to-btn');
+
+// Модальні вікна та меню
+const editNameModal = document.getElementById('edit-name-modal');
 const historyModal = document.getElementById('history-modal');
 const addPartModal = document.getElementById('add-part-modal');
 const partsHistoryModal = document.getElementById('parts-history-modal');
-const editNameModal = document.getElementById('edit-name-modal');
 const sideMenu = document.getElementById('side-menu');
 
+// Завантаження даних при відкритті сторінки
 window.addEventListener('DOMContentLoaded', function() {
     const savedGarage = localStorage.getItem('garage');
     const savedCurrentId = localStorage.getItem('currentCarId');
@@ -25,6 +41,7 @@ window.addEventListener('DOMContentLoaded', function() {
         garage = JSON.parse(savedGarage);
     }
 
+    // Якщо в гаражі пусто, створюємо першу дефолтну машину
     if (garage.length === 0) {
         const defaultCar = createNewCarObject("Моє Авто");
         garage.push(defaultCar);
@@ -38,6 +55,7 @@ window.addEventListener('DOMContentLoaded', function() {
     loadCurrentCarData();
 });
 
+// Шаблон для створення нової машини
 function createNewCarObject(name) {
     return {
         id: Date.now(),
@@ -57,6 +75,7 @@ function saveGarageToStorage() {
     localStorage.setItem('currentCarId', currentCarId);
 }
 
+// Виведення даних поточної машини на екран
 function loadCurrentCarData() {
     const car = garage.find(c => c.id === currentCarId);
     if (!car) return;
@@ -73,7 +92,7 @@ function loadCurrentCarData() {
 }
 
 // ==========================================
-// 2. БІЧНЕ МЕНЮ
+// 2. БІЧНЕ МЕНЮ (ГАРАЖ)
 // ==========================================
 document.getElementById('open-sidebar-btn').addEventListener('click', () => sideMenu.style.left = '0px');
 document.getElementById('close-sidebar').addEventListener('click', () => sideMenu.style.left = '-280px');
@@ -96,6 +115,7 @@ document.getElementById('add-new-car-btn').addEventListener('click', function() 
 
 function renderGarageMenu() {
     const container = document.getElementById('cars-list');
+    if (!container) return;
     container.innerHTML = '';
 
     garage.forEach(car => {
@@ -133,53 +153,38 @@ window.deleteCar = function(event, id) {
 };
 
 // ==========================================
-// 3. ЗМІНА НАЗВИ АВТО
+// 3. ЗМІНА НАЗВИ АВТО (ВИПРАВЛЕНО ДЛЯ ГАРАЖА)
 // ==========================================
 document.getElementById('edit-car-name-btn').addEventListener('click', () => {
-    document.getElementById('car-name-input').value = carNameDisplay.textContent;
-    editNameModal.style.display = 'flex';
-});
-document.getElementById('close-edit-name-modal').addEventListener('click', () => editNameModal.style.display = 'none');
-document.getElementById('save-car-btn').addEventListener('click', function() {
-    const input = document.getElementById('car-name-input');
-    if (input.value.trim() === "") return;
-
     const car = garage.find(c => c.id === currentCarId);
     if (car) {
-        car.name = input.value.trim();
-        carNameDisplay.textContent = car.name;
+        carNameInput.value = car.name;
+    }
+    editNameModal.style.display = 'flex';
+});
+
+document.getElementById('close-edit-name-modal').addEventListener('click', () => editNameModal.style.display = 'none');
+
+saveCarBtn.addEventListener('click', function() {
+    const newName = carNameInput.value.trim();
+    if (newName !== "") {
+        const car = garage.find(c => c.id === currentCarId);
+        if (car) {
+            car.name = newName;
+        }
+        carNameDisplay.textContent = newName;
         saveGarageToStorage();
         renderGarageMenu();
+        carNameInput.value = "";
     }
     editNameModal.style.display = 'none';
 });
 
 // ==========================================
-// 4. МОДАЛКИ
+// 4. ОНОВЛЕННЯ ПРОБІГУ
 // ==========================================
-document.getElementById('open-history-btn').addEventListener('click', () => historyModal.style.display = 'flex');
-document.getElementById('close-history-modal').addEventListener('click', () => historyModal.style.display = 'none');
-document.getElementById('open-add-part-modal-btn').addEventListener('click', () => addPartModal.style.display = 'flex');
-document.getElementById('close-add-part-modal').addEventListener('click', () => addPartModal.style.display = 'none');
-document.getElementById('open-parts-history-modal-btn').addEventListener('click', () => {
-    renderParts();
-    partsHistoryModal.style.display = 'flex';
-});
-document.getElementById('close-parts-history-modal').addEventListener('click', () => partsHistoryModal.style.display = 'none');
-
-window.addEventListener('click', function(e) {
-    if (e.target === historyModal) historyModal.style.display = 'none';
-    if (e.target === addPartModal) addPartModal.style.display = 'none';
-    if (e.target === partsHistoryModal) partsHistoryModal.style.display = 'none';
-    if (e.target === editNameModal) editNameModal.style.display = 'none';
-});
-
-// ==========================================
-// 5. ОНОВЛЕННЯ ПРОБІГУ
-// ==========================================
-document.getElementById('update-mileage-btn').addEventListener('click', function() {
-    const input = document.getElementById('mileage-input');
-    const newMileage = parseFloat(input.value);
+updateMileageBtn.addEventListener('click', function() {
+    const newMileage = parseFloat(mileageInput.value);
     if (!isNaN(newMileage) && newMileage >= 0) {
         const car = garage.find(c => c.id === currentCarId);
         if (car) {
@@ -188,24 +193,24 @@ document.getElementById('update-mileage-btn').addEventListener('click', function
             saveGarageToStorage();
             renderParts();
         }
-        input.value = "";
+        mileageInput.value = "";
     }
 });
 
 // ==========================================
-// 6. ДОДАВАННЯ ТА ВИВЕДЕННЯ ТО
+// 5. ДОДАВАННЯ ТА ВИВЕДЕННЯ ТО
 // ==========================================
-document.getElementById('save-to-btn').addEventListener('click', function() {
-    const mileage = document.getElementById('to-mileage-input').value;
-    const oil = document.getElementById('to-oil-input').value;
+saveToBtn.addEventListener('click', function() {
+    const mileage = toMileageInput.value;
+    const oil = toOilInput.value;
     
     if (mileage.trim() === "" || oil.trim() === "") {
         alert("Будь ласка, заповніть пробіг та назву мастила!");
         return;
     }
 
-    const cabinStatus = document.getElementById('to-cabin-checkbox').checked ? "Замінено" : "Ні";
-    const airStatus = document.getElementById('to-air-checkbox').checked ? "Замінено" : "Ні";
+    const cabinStatus = toCabinCheckbox.checked ? "Замінено" : "Ні";
+    const airStatus = toAirCheckbox.checked ? "Замінено" : "Ні";
 
     const car = garage.find(c => c.id === currentCarId);
     if (car) {
@@ -228,16 +233,18 @@ document.getElementById('save-to-btn').addEventListener('click', function() {
         loadCurrentCarData();
     }
 
-    document.getElementById('to-mileage-input').value = "";
-    document.getElementById('to-oil-input').value = "";
-    document.getElementById('to-cabin-checkbox').checked = false;
-    document.getElementById('to-air-checkbox').checked = false;
+    toMileageInput.value = "";
+    toOilInput.value = "";
+    toCabinCheckbox.checked = false;
+    toAirCheckbox.checked = false;
     
     alert("Дані ТО збережено!");
 });
 
 function renderHistory() {
     const historyList = document.getElementById('history-list');
+    if (!historyList) return;
+
     const car = garage.find(c => c.id === currentCarId);
     if (!car || car.maintenanceHistory.length === 0) {
         historyList.innerHTML = '<p style="color: #c4c4cc;">Історія порожня...</p>';
@@ -259,7 +266,7 @@ function renderHistory() {
 }
 
 // ==========================================
-// 7. ЛОГІКА ТРЕКЕРА ЗАПЧАСТИН
+// 6. ЛОГІКА ТРЕКЕРА ЗАПЧАСТИН
 // ==========================================
 document.getElementById('add-part-btn').addEventListener('click', function() {
     const nameInput = document.getElementById('part-name-input');
@@ -298,6 +305,8 @@ document.getElementById('add-part-btn').addEventListener('click', function() {
 
 function renderParts() {
     const partsList = document.getElementById('parts-list');
+    if (!partsList) return;
+
     const car = garage.find(c => c.id === currentCarId);
     if (!car || car.trackedParts.length === 0) {
         partsList.innerHTML = '<p style="color: #c4c4cc;">Жодної деталі ще не додано...</p>';
@@ -338,3 +347,21 @@ window.deletePart = function(id) {
         renderParts();
     }
 };
+
+// Керування модальними вікнами
+document.getElementById('open-history-btn').addEventListener('click', () => historyModal.style.display = 'flex');
+document.getElementById('close-history-modal').addEventListener('click', () => historyModal.style.display = 'none');
+document.getElementById('open-add-part-modal-btn').addEventListener('click', () => addPartModal.style.display = 'flex');
+document.getElementById('close-add-part-modal').addEventListener('click', () => addPartModal.style.display = 'none');
+document.getElementById('open-parts-history-modal-btn').addEventListener('click', () => {
+    renderParts();
+    partsHistoryModal.style.display = 'flex';
+});
+document.getElementById('close-parts-history-modal').addEventListener('click', () => partsHistoryModal.style.display = 'none');
+
+window.addEventListener('click', function(e) {
+    if (e.target === historyModal) historyModal.style.display = 'none';
+    if (e.target === addPartModal) addPartModal.style.display = 'none';
+    if (e.target === partsHistoryModal) partsHistoryModal.style.display = 'none';
+    if (e.target === editNameModal) editNameModal.style.display = 'none';
+});
