@@ -4,7 +4,7 @@ body {
     color: #ffffff;
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     justify-content: center;
 }
@@ -17,15 +17,16 @@ body {
     max-width: 480px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     border: 1px solid #29292e;
+    box-sizing: border-box;
 }
 
-/* Нова стильна шапка */
+/* ШАПКА: Елементи стоять строго в один рядок */
 .main-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
     gap: 10px;
-    position: relative;
 }
 
 .burger-menu-btn {
@@ -34,21 +35,22 @@ body {
     color: #ffffff;
     font-size: 28px;
     cursor: pointer;
-    padding: 0;
+    padding: 5px;
+    flex-shrink: 0;
 }
 
 .car-title-block {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex: 1;
+    gap: 6px;
     justify-content: center;
+    flex: 1;
 }
 
 .car-title-block h1 {
-    font-size: 24px;
+    font-size: 22px;
     margin: 0;
-    word-break: break-all;
+    text-align: center;
 }
 
 .mini-edit-btn {
@@ -61,13 +63,14 @@ body {
 
 /* Кругле фото авто справа */
 .car-photo-block {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
 }
 
 .photo-label img {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #4ea8de;
@@ -75,20 +78,21 @@ body {
     background-color: #202024;
 }
 
-/* Бічна панель (Меню Гаража) */
+/* БІЧНА ПАНЕЛЬ: Тепер вона надійно схована за лівим краєм екрана (left: -280px) */
 .sidebar {
     height: 100%;
-    width: 0; /* Спочатку приховане */
+    width: 280px; 
     position: fixed;
     z-index: 2000;
     top: 0;
-    left: 0;
+    left: -280px; /* Сховано ліворуч */
     background-color: #1a1a1e;
     overflow-x: hidden;
-    transition: 0.3s;
+    transition: 0.3s ease;
     padding-top: 60px;
     box-sizing: border-box;
     border-right: 1px solid #29292e;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
 }
 
 .sidebar h2, .sidebar h3 {
@@ -104,10 +108,8 @@ body {
     color: #c4c4cc;
 }
 
-/* Елементи списку машин у меню */
 .car-menu-item {
     padding: 15px 20px;
-    text-decoration: none;
     font-size: 18px;
     color: #c4c4cc;
     display: flex;
@@ -131,12 +133,12 @@ body {
     cursor: pointer;
 }
 
-/* Форми та інпути */
+/* Форми та елементи */
 input, select {
     background-color: #202024;
     border: 1px solid #29292e;
     color: white;
-    padding: 10px;
+    padding: 12px;
     border-radius: 6px;
     font-size: 14px;
     width: 100%;
@@ -203,7 +205,6 @@ hr {
     cursor: pointer;
 }
 
-/* Деталі та Історія */
 .history-item, .part-item {
     background-color: #202024;
     border-left: 4px solid #4ea8de;

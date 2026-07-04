@@ -1,10 +1,9 @@
 // ==========================================
 // 1. ІНІЦІАЛІЗАЦІЯ ДАНИХ (ГАРАЖ)
 // ==========================================
-let garage = []; // Список усіх машин
-let currentCarId = null; // ID поточної вибраної машини
+let garage = []; 
+let currentCarId = null; 
 
-// Елементи інтерфейсу
 const carNameDisplay = document.getElementById('car-name-display');
 const currentMileageDisplay = document.getElementById('current-mileage');
 const lastToMileage = document.getElementById('last-to-mileage');
@@ -13,14 +12,12 @@ const lastToCabin = document.getElementById('last-to-cabin');
 const lastToAir = document.getElementById('last-to-air');
 const carPhotoPreview = document.getElementById('car-photo-preview');
 
-// Модалки
 const historyModal = document.getElementById('history-modal');
 const addPartModal = document.getElementById('add-part-modal');
 const partsHistoryModal = document.getElementById('parts-history-modal');
 const editNameModal = document.getElementById('edit-name-modal');
 const sideMenu = document.getElementById('side-menu');
 
-// Завантаження при старті
 window.addEventListener('DOMContentLoaded', function() {
     const savedGarage = localStorage.getItem('garage');
     const savedCurrentId = localStorage.getItem('currentCarId');
@@ -29,7 +26,6 @@ window.addEventListener('DOMContentLoaded', function() {
         garage = JSON.parse(savedGarage);
     }
 
-    // Якщо гараж порожній, створюємо першу дефолтну машину
     if (garage.length === 0) {
         const defaultCar = createNewCarObject("Моє Авто");
         garage.push(defaultCar);
@@ -63,7 +59,6 @@ function saveGarageToStorage() {
     localStorage.setItem('currentCarId', currentCarId);
 }
 
-// Завантаження всіх даних активного автомобіля на екран
 function loadCurrentCarData() {
     const car = garage.find(c => c.id === currentCarId);
     if (!car) return;
@@ -81,26 +76,25 @@ function loadCurrentCarData() {
 }
 
 // ==========================================
-// 2. БІЧНЕ МЕНЮ (УПРАВЛІННЯ ГАРАЖЕМ)
+// 2. БІЧНЕ МЕНЮ (ВИЇЗД СТИЛЕМ)
 // ==========================================
-document.getElementById('open-sidebar-btn').addEventListener('click', () => sideMenu.style.width = '280px');
-document.getElementById('close-sidebar').addEventListener('click', () => sideMenu.style.width = '0');
+document.getElementById('open-sidebar-btn').addEventListener('click', () => sideMenu.style.left = '0px');
+document.getElementById('close-sidebar').addEventListener('click', () => sideMenu.style.left = '-280px');
 
-// Додавання нової машини в гараж
 document.getElementById('add-new-car-btn').addEventListener('click', function() {
     const input = document.getElementById('new-car-name-input');
     if (input.value.trim() === "") return;
 
     const newCar = createNewCarObject(input.value.trim());
     garage.push(newCar);
-    currentCarId = newCar.id; // Відразу перемикаємось на неї
+    currentCarId = newCar.id; 
     
     saveGarageToStorage();
     loadCurrentCarData();
     renderGarageMenu();
     
     input.value = "";
-    sideMenu.style.width = '0'; // Закриваємо меню
+    sideMenu.style.left = '-280px'; 
 });
 
 function renderGarageMenu() {
@@ -116,13 +110,12 @@ function renderGarageMenu() {
             ${garage.length > 1 ? `<button class="delete-car-btn" onclick="deleteCar(event, ${car.id})">🗑️</button>` : ''}
         `;
 
-        // Клік для вибору авто
         item.querySelector('.car-select-click').addEventListener('click', () => {
             currentCarId = car.id;
             saveGarageToStorage();
             loadCurrentCarData();
             renderGarageMenu();
-            sideMenu.style.width = '0';
+            sideMenu.style.left = '-280px';
         });
 
         container.appendChild(item);
@@ -130,7 +123,7 @@ function renderGarageMenu() {
 }
 
 window.deleteCar = function(event, id) {
-    event.stopPropagation(); // Щоб не спрацював клік вибору машини
+    event.stopPropagation(); 
     if (!confirm("Видалити автомобіль та всі його дані з гаража?")) return;
 
     garage = garage.filter(c => c.id !== id);
@@ -143,7 +136,7 @@ window.deleteCar = function(event, id) {
 };
 
 // ==========================================
-// 3. ФОТО АВТОМОБІЛЯ (Base64 в пам'ять)
+// 3. ФОТО АВТОМОБІЛЯ
 // ==========================================
 document.getElementById('car-photo-upload').addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -153,7 +146,7 @@ document.getElementById('car-photo-upload').addEventListener('change', function(
     reader.onloadend = function() {
         const car = garage.find(c => c.id === currentCarId);
         if (car) {
-            car.photo = reader.result; // Зберігаємо картинку у вигляді тексту
+            car.photo = reader.result; 
             carPhotoPreview.src = reader.result;
             saveGarageToStorage();
         }
@@ -162,7 +155,7 @@ document.getElementById('car-photo-upload').addEventListener('change', function(
 });
 
 // ==========================================
-// 4. ЗМІНА НАЗВІ АВТО (ЧЕРЕЗ МІНІ-КНОПКУ)
+// 4. ЗМІНА НАЗВИ АВТО
 // ==========================================
 document.getElementById('edit-car-name-btn').addEventListener('click', () => {
     document.getElementById('car-name-input').value = carNameDisplay.textContent;
@@ -184,7 +177,7 @@ document.getElementById('save-car-btn').addEventListener('click', function() {
 });
 
 // ==========================================
-// 5. МОДАЛКИ (ВІДКРИТТЯ / ЗАКРИТТЯ)
+// 5. МОДАЛКИ
 // ==========================================
 document.getElementById('open-history-btn').addEventListener('click', () => historyModal.style.display = 'flex');
 document.getElementById('close-history-modal').addEventListener('click', () => historyModal.style.display = 'none');
@@ -204,7 +197,7 @@ window.addEventListener('click', function(e) {
 });
 
 // ==========================================
-// 6. ОНОВЛЕННЯ ГОЛОВНОГО ПРОБІГУ
+// 6. ОНОВЛЕННЯ ПРОБІГУ
 // ==========================================
 document.getElementById('update-mileage-btn').addEventListener('click', function() {
     const input = document.getElementById('mileage-input');
@@ -242,7 +235,7 @@ document.getElementById('save-to-btn').addEventListener('click', function() {
         car.toOil = oil;
         car.toCabin = cabinStatus;
         car.toAir = airStatus;
-        car.mileage = parseFloat(mileage); // Прирівнюємо поточний пробіг
+        car.mileage = parseFloat(mileage); 
 
         const newTo = {
             date: new Date().toLocaleDateString('uk-UA'),
@@ -337,8 +330,7 @@ function renderParts() {
 
     car.trackedParts.forEach(function(part) {
         const nextChange = part.replacedAt + part.resource;
-        const left = nextChange - car.mile; // оновлено нижче для точності
-        const accurateLeft = nextChange - car.mileage;
+        const accurateLeft = nextChange - car.mileage; // Помилка БУЛА ТУТ, тепер вона ВИПРАВЛЕНА! 🛠️
 
         let warningClass = '';
         let leftText = `${accurateLeft} км`;
