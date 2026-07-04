@@ -8,12 +8,35 @@
 </head>
 <body>
 
+    <div id="side-menu" class="sidebar">
+        <span class="close-sidebar-btn" id="close-sidebar">&times;</span>
+        <h2>Мій Гараж 🚗</h2>
+        
+        <div id="cars-list"></div>
+
+        <hr style="border-color: #29292e; margin: 20px 0;">
+
+        <h3>Додати автомобіль</h3>
+        <div class="to-form" style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" id="new-car-name-input" placeholder="Марка авто (напр., Passat B5+)">
+            <button id="add-new-car-btn" style="background-color: #74c69d;">Додати в гараж</button>
+        </div>
+    </div>
+
     <div class="app-container">
-        <header>
-            <h1 id="car-name-display">Моє Авто</h1>
-            <div class="car-input-group">
-                <input type="text" id="car-name-input" placeholder="Введіть марку авто (напр., BMW X5)">
-                <button id="save-car-btn">Зберегти</button>
+        <header class="main-header">
+            <button id="open-sidebar-btn" class="burger-menu-btn">☰</button>
+            
+            <div class="car-title-block">
+                <h1 id="car-name-display">Моє Авто</h1>
+                <button id="edit-car-name-btn" class="mini-edit-btn">✏️</button>
+            </div>
+
+            <div class="car-photo-block">
+                <label for="car-photo-upload" class="photo-label">
+                    <img id="car-photo-preview" src="https://via.placeholder.com/150/202024/ffffff?text=Auto" alt="Фото авто">
+                </label>
+                <input type="file" id="car-photo-upload" accept="image/*" style="display: none;">
             </div>
         </header>
 
@@ -30,7 +53,8 @@
         <hr>
 
         <section class="maintenance-section">
-            <h2>Останнє ТО</h2>
+            <h2>Технічне обслуговування</h2>
+            
             <div id="maintenance-info" style="background: #f0f0f0; padding: 10px; margin-bottom: 15px; border-radius: 5px; color: black;">
                 <p><strong>Пробіг на ТО:</strong> <span id="last-to-mileage">—</span> км</p>
                 <p><strong>Мастило:</strong> <span id="last-to-oil">—</span></p>
@@ -38,31 +62,69 @@
                 <p><strong>Повітряний фільтр:</strong> <span id="last-to-air">—</span></p>
             </div>
 
-            <button id="open-history-btn" style="background-color: #74c69d; margin-bottom: 20px;">📜 Переглянути історію ТО</button>
+            <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+                <button id="open-history-btn" style="background-color: #74c69d; flex: 1;">📜 Історія ТО</button>
+            </div>
 
             <h3>Записати нове ТО</h3>
-            <div class="to-form" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px;">
+            <div class="to-form" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin-bottom: 30px;">
                 <input type="number" id="to-mileage-input" placeholder="Пробіг на момент ТО (км)">
                 <input type="text" id="to-oil-input" placeholder="Яке мастило залили?">
-                
-                <label>
-                    <input type="checkbox" id="to-cabin-checkbox"> Заміна фільтра салону
-                </label>
-                <label>
-                    <input type="checkbox" id="to-air-checkbox"> Заміна повітряного filtra
-                </label>
-                
+                <label><input type="checkbox" id="to-cabin-checkbox"> Заміна фільтра салону</label>
+                <label><input type="checkbox" id="to-air-checkbox"> Заміна повітряного фільтра</label>
                 <button id="save-to-btn">Зберегти дані ТО</button>
+            </div>
+
+            <hr>
+
+            <h2>Контроль запчастин</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button id="open-add-part-modal-btn" style="background-color: #4ea8de; flex: 1;">🔧 Заміна деталі</button>
+                <button id="open-parts-history-modal-btn" style="background-color: #5e60ce; flex: 1;">📊 Історія заміни деталей</button>
             </div>
         </section>
     </div>
 
+    <div id="edit-name-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn" id="close-edit-name-modal">&times;</span>
+            <h2>Змінити назву поточного авто</h2>
+            <div class="to-form" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <input type="text" id="car-name-input" placeholder="Нова назва авто">
+                <button id="save-car-btn" style="background-color: #74c69d;">Зберегти</button>
+            </div>
+        </div>
+    </div>
+
     <div id="history-modal" class="modal">
         <div class="modal-content">
-            <span class="close-modal-btn">&times;</span>
+            <span class="close-modal-btn" id="close-history-modal">&times;</span>
             <h2>Історія технічного обслуговування</h2>
             <div id="history-list">
                 <p style="color: #c4c4cc;">Історія порожня...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-part-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn" id="close-add-part-modal">&times;</span>
+            <h2>Записати заміну деталі</h2>
+            <div class="to-form" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                <input type="text" id="part-name-input" placeholder="Назва деталі (напр., Ремінь ГРМ)">
+                <input type="number" id="part-replaced-mileage" placeholder="Пробіг, коли замінили (км)">
+                <input type="number" id="part-resource-input" placeholder="Ресурс деталі (скільки ходить, км)">
+                <button id="add-part-btn" style="background-color: #74c69d; width: 100%;">Зберегти деталь</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="parts-history-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn" id="close-parts-history-modal">&times;</span>
+            <h2>Стан та ресурс запчастин</h2>
+            <div id="parts-list" style="margin-top: 15px;">
+                <p style="color: #c4c4cc;">Жодної деталі ще не додано...</p>
             </div>
         </div>
     </div>

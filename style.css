@@ -1,142 +1,180 @@
-/* Загальні налаштування для всього екрана */
+/* Базові стилі */
 body {
     background-color: #121214;
-    color: #e1e1e6;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
     display: flex;
     justify-content: center;
 }
 
-/* Головний контейнер додатка */
 .app-container {
     background-color: #1a1a1e;
+    padding: 20px;
+    border-radius: 12px;
     width: 100%;
     max-width: 480px;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     border: 1px solid #29292e;
 }
 
-/* Заголовки */
-h1, h2, h3 {
-    color: #ffffff;
-    margin-top: 0;
+/* Нова стильна шапка */
+.main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
 }
 
-h1 {
+.burger-menu-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
     font-size: 28px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #4ea8de;
-    text-shadow: 0 0 10px rgba(78, 168, 222, 0.3);
+    cursor: pointer;
+    padding: 0;
 }
 
-h2 {
-    font-size: 20px;
-    color: #74c69d;
+.car-title-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
 }
 
-/* Розділювачі лінії */
-hr {
-    border: 0;
-    height: 1px;
-    background: #29292e;
-    margin: 25px 0;
+.car-title-block h1 {
+    font-size: 24px;
+    margin: 0;
+    word-break: break-all;
 }
 
-/* Поля вводу (інпути) */
-input[type="text"], input[type="number"] {
-    background-color: #121214;
-    color: #ffffff;
-    border: 1px solid #29292e;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    outline: none;
+.mini-edit-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+/* Кругле фото авто справа */
+.car-photo-block {
+    width: 50px;
+    height: 50px;
+}
+
+.photo-label img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #4ea8de;
+    cursor: pointer;
+    background-color: #202024;
+}
+
+/* Бічна панель (Меню Гаража) */
+.sidebar {
+    height: 100%;
+    width: 0; /* Спочатку приховане */
+    position: fixed;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    background-color: #1a1a1e;
+    overflow-x: hidden;
     transition: 0.3s;
+    padding-top: 60px;
+    box-sizing: border-box;
+    border-right: 1px solid #29292e;
+}
+
+.sidebar h2, .sidebar h3 {
+    padding: 0 20px;
+}
+
+.close-sidebar-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 36px;
+    cursor: pointer;
+    color: #c4c4cc;
+}
+
+/* Елементи списку машин у меню */
+.car-menu-item {
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #c4c4cc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #29292e;
+    cursor: pointer;
+}
+
+.car-menu-item.active {
+    background-color: #202024;
+    color: #4ea8de;
+    border-left: 4px solid #4ea8de;
+}
+
+.delete-car-btn {
+    background: none;
+    border: none;
+    color: #e63946;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Форми та інпути */
+input, select {
+    background-color: #202024;
+    border: 1px solid #29292e;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
     width: 100%;
     box-sizing: border-box;
 }
 
-input:focus {
-    border-color: #4ea8de;
-    box-shadow: 0 0 8px rgba(78, 168, 222, 0.2);
-}
-
-/* Кнопки */
 button {
     background-color: #4ea8de;
-    color: #121214;
+    color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: bold;
+    padding: 12px;
+    border-radius: 6px;
     font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
     width: 100%;
 }
 
 button:hover {
-    background-color: #64dfdf;
-    transform: translateY(-1px);
+    opacity: 0.9;
 }
 
-/* Групування елементів */
-.car-input-group, .mileage-input-group, .to-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 15px;
+hr {
+    border: 0;
+    border-top: 1px solid #29292e;
+    margin: 20px 0;
 }
 
-/* Картка відображення останнього ТО */
-#maintenance-info {
-    background-color: #202024 !important;
-    border-left: 4px solid #74c69d;
-    padding: 15px !important;
-    border-radius: 8px;
-}
-
-#maintenance-info p {
-    margin: 8px 0;
-    font-size: 15px;
-    color: #c4c4cc;
-}
-
-#maintenance-info strong {
-    color: #ffffff;
-}
-
-/* Чекбокси (галочки) */
-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #c4c4cc;
-    margin: 5px 0;
-}
-
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-/* Стилі для модального (спливаючого) вікна */
+/* Вікна (Модалки) */
 .modal {
-    display: none; /* Спочатку воно приховане */
+    display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 3000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Напівпрозорий фон */
+    background-color: rgba(0, 0, 0, 0.7);
     justify-content: center;
     align-items: center;
     padding: 20px;
@@ -148,14 +186,13 @@ input[type="checkbox"] {
     padding: 25px;
     border-radius: 16px;
     width: 100%;
-    max-width: 500px;
+    max-width: 450px;
     max-height: 80vh;
-    overflow-y: auto; /* Якщо ТО буде багато, з'явиться прокрутка */
+    overflow-y: auto;
     border: 1px solid #29292e;
     position: relative;
 }
 
-/* Кнопка закриття вікна (хрестик) */
 .close-modal-btn {
     position: absolute;
     top: 15px;
@@ -166,12 +203,8 @@ input[type="checkbox"] {
     cursor: pointer;
 }
 
-.close-modal-btn:hover {
-    color: #ffffff;
-}
-
-/* Елемент списку історії */
-.history-item {
+/* Деталі та Історія */
+.history-item, .part-item {
     background-color: #202024;
     border-left: 4px solid #4ea8de;
     padding: 12px;
@@ -179,7 +212,15 @@ input[type="checkbox"] {
     border-radius: 6px;
 }
 
-.history-item p {
-    margin: 4px 0;
-    font-size: 14px;
+.part-item.warning {
+    border-left-color: #e63946;
+    background-color: #2b1a1d;
+}
+
+.delete-part-btn {
+    background-color: #e63946;
+    padding: 5px 10px;
+    font-size: 12px;
+    width: auto;
+    margin-top: 8px;
 }
