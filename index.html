@@ -8,10 +8,12 @@
 </head>
 <body>
 
+    <!-- БІЧНЕ МЕНЮ (ГАРАЖ) -->
     <div id="side-menu" class="sidebar">
         <span class="close-sidebar-btn" id="close-sidebar">&times;</span>
         <h2>Мій Гараж 🚗</h2>
         
+        <!-- Список автомобілів -->
         <div id="cars-list"></div>
 
         <hr style="border-color: #29292e; margin: 20px 0;">
@@ -23,25 +25,26 @@
         </div>
     </div>
 
+    <!-- ГОЛОВНИЙ КОНТЕЙНЕР -->
     <div class="app-container">
+        <!-- ВЕРХНЯ ПАНЕЛЬ (ШАПКА) -->
         <header class="main-header">
+            <!-- Три рисочки строго зліва -->
             <button id="open-sidebar-btn" class="burger-menu-btn">☰</button>
             
+            <!-- Назва авто по центру + маленька кнопка -->
             <div class="car-title-block">
                 <h1 id="car-name-display">Моє Авто</h1>
                 <button id="edit-car-name-btn" class="mini-edit-btn">✏️</button>
             </div>
-
-            <div class="car-photo-block">
-                <label for="car-photo-upload" class="photo-label">
-                    <img id="car-photo-preview" src="https://via.placeholder.com/150/202024/ffffff?text=Auto" alt="Фото авто">
-                </label>
-                <input type="file" id="car-photo-upload" accept="image/*" style="display: none;">
-            </div>
+            
+            <!-- Порожній блок для ідеального центрування назви балансом до кнопки ліворуч -->
+            <div style="width: 35px; flex-shrink: 0;"></div>
         </header>
 
         <hr>
 
+        <!-- Блок із пробігом -->
         <section class="odometer-section">
             <h2>Поточний пробіг: <span id="current-mileage">0</span> км</h2>
             <div class="mileage-input-group">
@@ -52,6 +55,7 @@
 
         <hr>
 
+        <!-- Головний блок обслуговування -->
         <section class="maintenance-section">
             <h2>Технічне обслуговування</h2>
             
@@ -77,6 +81,7 @@
 
             <hr>
 
+            <!-- Кнопки деталей -->
             <h2>Контроль запчастин</h2>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button id="open-add-part-modal-btn" style="background-color: #4ea8de; flex: 1;">🔧 Заміна деталі</button>
@@ -85,6 +90,7 @@
         </section>
     </div>
 
+    <!-- ВІКНО ЗМІНИ НАЗВИ АВТО -->
     <div id="edit-name-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal-btn" id="close-edit-name-modal">&times;</span>
@@ -96,6 +102,7 @@
         </div>
     </div>
 
+    <!-- ВІКНО 1: ІСТОРІЯ ТО -->
     <div id="history-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal-btn" id="close-history-modal">&times;</span>
@@ -106,6 +113,7 @@
         </div>
     </div>
 
+    <!-- ВІКНО 2: ФОРМА ДОДАВАННЯ ДЕТАЛІ -->
     <div id="add-part-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal-btn" id="close-add-part-modal">&times;</span>
@@ -119,6 +127,7 @@
         </div>
     </div>
 
+    <!-- ВІКНО 3: ІСТОРІЯ ЗАМІНИ ДЕТАЛЕЙ -->
     <div id="parts-history-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal-btn" id="close-parts-history-modal">&times;</span>

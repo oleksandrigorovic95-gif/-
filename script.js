@@ -10,7 +10,6 @@ const lastToMileage = document.getElementById('last-to-mileage');
 const lastToOil = document.getElementById('last-to-oil');
 const lastToCabin = document.getElementById('last-to-cabin');
 const lastToAir = document.getElementById('last-to-air');
-const carPhotoPreview = document.getElementById('car-photo-preview');
 
 const historyModal = document.getElementById('history-modal');
 const addPartModal = document.getElementById('add-part-modal');
@@ -48,7 +47,6 @@ function createNewCarObject(name) {
         toOil: "—",
         toCabin: "—",
         toAir: "—",
-        photo: "https://via.placeholder.com/150/202024/ffffff?text=Auto",
         maintenanceHistory: [],
         trackedParts: []
     };
@@ -69,14 +67,13 @@ function loadCurrentCarData() {
     lastToOil.textContent = car.toOil;
     lastToCabin.textContent = car.toCabin;
     lastToAir.textContent = car.toAir;
-    carPhotoPreview.src = car.photo;
 
     renderHistory();
     renderParts();
 }
 
 // ==========================================
-// 2. БІЧНЕ МЕНЮ (ВИЇЗД СТИЛЕМ)
+// 2. БІЧНЕ МЕНЮ
 // ==========================================
 document.getElementById('open-sidebar-btn').addEventListener('click', () => sideMenu.style.left = '0px');
 document.getElementById('close-sidebar').addEventListener('click', () => sideMenu.style.left = '-280px');
@@ -136,26 +133,7 @@ window.deleteCar = function(event, id) {
 };
 
 // ==========================================
-// 3. ФОТО АВТОМОБІЛЯ
-// ==========================================
-document.getElementById('car-photo-upload').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = function() {
-        const car = garage.find(c => c.id === currentCarId);
-        if (car) {
-            car.photo = reader.result; 
-            carPhotoPreview.src = reader.result;
-            saveGarageToStorage();
-        }
-    };
-    reader.readAsDataURL(file);
-});
-
-// ==========================================
-// 4. ЗМІНА НАЗВИ АВТО
+// 3. ЗМІНА НАЗВИ АВТО
 // ==========================================
 document.getElementById('edit-car-name-btn').addEventListener('click', () => {
     document.getElementById('car-name-input').value = carNameDisplay.textContent;
@@ -177,7 +155,7 @@ document.getElementById('save-car-btn').addEventListener('click', function() {
 });
 
 // ==========================================
-// 5. МОДАЛКИ
+// 4. МОДАЛКИ
 // ==========================================
 document.getElementById('open-history-btn').addEventListener('click', () => historyModal.style.display = 'flex');
 document.getElementById('close-history-modal').addEventListener('click', () => historyModal.style.display = 'none');
@@ -197,7 +175,7 @@ window.addEventListener('click', function(e) {
 });
 
 // ==========================================
-// 6. ОНОВЛЕННЯ ПРОБІГУ
+// 5. ОНОВЛЕННЯ ПРОБІГУ
 // ==========================================
 document.getElementById('update-mileage-btn').addEventListener('click', function() {
     const input = document.getElementById('mileage-input');
@@ -215,7 +193,7 @@ document.getElementById('update-mileage-btn').addEventListener('click', function
 });
 
 // ==========================================
-// 7. ДОДАВАННЯ ТА ВИВЕДЕННЯ ТО
+// 6. ДОДАВАННЯ ТА ВИВЕДЕННЯ ТО
 // ==========================================
 document.getElementById('save-to-btn').addEventListener('click', function() {
     const mileage = document.getElementById('to-mileage-input').value;
@@ -281,7 +259,7 @@ function renderHistory() {
 }
 
 // ==========================================
-// 8. ЛОГІКА ТРЕКЕРА ЗАПЧАСТИН
+// 7. ЛОГІКА ТРЕКЕРА ЗАПЧАСТИН
 // ==========================================
 document.getElementById('add-part-btn').addEventListener('click', function() {
     const nameInput = document.getElementById('part-name-input');
@@ -330,7 +308,7 @@ function renderParts() {
 
     car.trackedParts.forEach(function(part) {
         const nextChange = part.replacedAt + part.resource;
-        const accurateLeft = nextChange - car.mileage; // Помилка БУЛА ТУТ, тепер вона ВИПРАВЛЕНА! 🛠️
+        const accurateLeft = nextChange - car.mileage;
 
         let warningClass = '';
         let leftText = `${accurateLeft} км`;

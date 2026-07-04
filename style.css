@@ -20,13 +20,13 @@ body {
     box-sizing: border-box;
 }
 
-/* ШАПКА: Елементи стоять строго в один рядок */
+/* ШАПКА: Рисочки зліва, назва чітко по центру */
 .main-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 10px;
+    height: 40px;
 }
 
 .burger-menu-btn {
@@ -35,14 +35,16 @@ body {
     color: #ffffff;
     font-size: 28px;
     cursor: pointer;
-    padding: 5px;
+    padding: 0;
+    width: 35px;
+    text-align: left;
     flex-shrink: 0;
 }
 
 .car-title-block {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     justify-content: center;
     flex: 1;
 }
@@ -51,6 +53,10 @@ body {
     font-size: 22px;
     margin: 0;
     text-align: center;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .mini-edit-btn {
@@ -59,33 +65,17 @@ body {
     font-size: 16px;
     cursor: pointer;
     padding: 4px;
-}
-
-/* Кругле фото авто справа */
-.car-photo-block {
-    width: 45px;
-    height: 45px;
     flex-shrink: 0;
 }
 
-.photo-label img {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #4ea8de;
-    cursor: pointer;
-    background-color: #202024;
-}
-
-/* БІЧНА ПАНЕЛЬ: Тепер вона надійно схована за лівим краєм екрана (left: -280px) */
+/* БІЧНА ПАНЕЛЬ (ГАРАЖ) */
 .sidebar {
     height: 100%;
     width: 280px; 
     position: fixed;
     z-index: 2000;
     top: 0;
-    left: -280px; /* Сховано ліворуч */
+    left: -280px; 
     background-color: #1a1a1e;
     overflow-x: hidden;
     transition: 0.3s ease;
