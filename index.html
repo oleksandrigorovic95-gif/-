@@ -2,126 +2,34 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>АвтоТрекер</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoTracker — Контроль запчастин</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="side-menu" class="sidebar">
-        <div id="cars-list"></div>
-        <hr style="border-color: #29292e; margin: 20px 0;">
-        <h3>Додати автомобіль</h3>
-        <div class="to-form" style="display: flex; flex-direction: column; gap: 10px;">
-            <input type="text" id="new-car-name-input" placeholder="Марка авто (напр., Passat B5+)">
-            <button id="add-new-car-btn" style="background-color: #74c69d; color: #121214; padding: 10px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer;">Додати в гараж</button>
-        </div>
-    </div>
-
-    <div class="app-container" style="max-width: 500px; margin: 0 auto; padding: 15px; box-sizing: border-box;">
+    <div class="container">
+        <h1><i class="fas fa-car"></i> AutoTracker</h1>
         
-        <header class="main-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding: 5px 0; width: 100%;">
-            <button id="open-sidebar-btn" class="burger-menu-btn" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">☰</button>
-            
-            <div class="car-title-block" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1;">
-                <h1 id="car-name-display" style="margin: 0; font-size: 22px; color: white; display: inline-block;">Моє Авто</h1>
-                <button id="edit-car-name-btn" class="mini-edit-btn" style="background: none; border: none; font-size: 16px; cursor: pointer; padding: 0; margin: 0;">✏️</button>
+        <div class="form-card">
+            <h3 id="form-title">Додати запчастину</h3>
+            <input type="hidden" id="part-id">
+            <div class="input-group">
+                <input type="text" id="part-name" placeholder="Назва (напр., Масло двигуна)">
             </div>
-            
-            <div style="width: 30px;"></div> </header>
-
-        <hr style="border-color: #29292e; margin-bottom: 20px;">
-
-        <section class="odometer-section" style="background: #1e1e24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2d2d35;">
-            <h2 style="margin: 0 0 12px 0; font-size: 18px;">Поточний пробіг: <span id="current-mileage" style="color: #4ea8de; font-weight: bold;">0</span> км</h2>
-            <div class="mileage-input-group" style="display: flex; gap: 10px; width: 100%; box-sizing: border-box;">
-                <input type="number" id="mileage-input" placeholder="Введіть новий пробіг (км)" style="flex: 2; min-width: 0; padding: 12px; border-radius: 6px; border: 1px solid #3a3a44; background: #121214; color: white; font-size: 15px;">
-                <button id="update-mileage-btn" style="flex: 1; min-width: max-content; background-color: #3a86ff; color: white; border: none; padding: 12px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px; white-space: nowrap;">Оновити</button>
+            <div class="input-group">
+                <input type="number" id="part-current" placeholder="Поточний пробіг (км)">
             </div>
-        </section>
-
-        <section class="info-section" style="background: #1e1e24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2d2d35;">
-            <h3 style="margin: 0 0 15px 0; font-size: 18px; color: #74c69d;">Технічне обслуговування</h3>
-            
-            <div class="info-card" style="background: #ffffff; color: #121214; padding: 15px; border-radius: 8px; margin-bottom: 15px; font-size: 15px; line-height: 1.6;">
-                <p style="margin: 4px 0;"><strong>Пробіг на ТО:</strong> <span id="last-to-mileage">—</span> км</p>
-                <p style="margin: 4px 0;"><strong>Мастило:</strong> <span id="last-to-oil">—</span></p>
-                <p style="margin: 4px 0;"><strong>Фільтр салону:</strong> <span id="last-to-cabin">—</span></p>
-                <p style="margin: 4px 0;"><strong>Повітряний фільтр:</strong> <span id="last-to-air">—</span></p>
+            <div class="input-group">
+                <input type="number" id="part-max" placeholder="Ресурс (через скільки км заміна)">
             </div>
-
-            <button id="open-history-btn" class="btn" style="background-color: #52b788; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold;">📦 Історія ТО</button>
-        </section>
-
-        <section class="form-section" style="background: #1e1e24; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2d2d35;">
-            <h3 style="margin: 0 0 15px 0; font-size: 18px;">Записати нове ТО</h3>
-            <div class="to-form" style="display: flex; flex-direction: column; gap: 12px;">
-                <input type="number" id="to-mileage-input" placeholder="Пробіг на момент ТО (км)" style="padding: 10px; border-radius: 6px; border: 1px solid #3a3a44; background: #121214; color: white;">
-                <input type="text" id="to-oil-input" placeholder="Яке мастило залили?" style="padding: 10px; border-radius: 6px; border: 1px solid #3a3a44; background: #121214; color: white;">
-                
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px;">
-                    <input type="checkbox" id="to-cabin-checkbox" style="width: 18px; height: 18px;"> Заміна фільтра салону
-                </label>
-                
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px;">
-                    <input type="checkbox" id="to-air-checkbox" style="width: 18px; height: 18px;"> Заміна повітряного фільтра
-                </label>
-                
-                <button id="save-to-btn" style="background-color: #4ea8de; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 5px;">Зберегти дані ТО</button>
-            </div>
-        </section>
-
-        <section class="parts-section" style="background: #1e1e24; padding: 15px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #2d2d35;">
-            <h3 style="margin: 0 0 15px 0; font-size: 18px; color: #74c69d; text-align: center;">Контроль запчастин</h3>
-            
-            <div style="display: flex; gap: 10px;">
-                <button id="open-add-part-modal-btn" class="open-modal-btn" style="flex: 1; background-color: #3a86ff; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;">
-                    <span>🔧</span> Заміна деталі
-                </button>
-                <button id="open-parts-history-modal-btn" class="open-modal-btn" style="flex: 1; background-color: #833ab4; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;">
-                    <span>📊</span> Історія заміни деталей
-                </button>
-            </div>
-        </section>
-
-    </div>
-
-    <div id="history-modal" class="modal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; padding:15px; box-sizing:border-box;">
-        <div class="modal-content" style="background: #1e1e24; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #3a3a44;">
-            <span class="close-modal-btn" id="close-history-modal" style="float:right; cursor:pointer; font-size:24px; color:white;">&times;</span>
-            <h2 style="color: #52b788; margin-top: 0;">Історія технічного обслуговування</h2>
-            <div id="history-list"></div>
+            <button id="save-btn" onclick="savePart()">Зберегти</button>
+            <button id="cancel-btn" onclick="resetForm()" style="display: none; background: #555; margin-top: 5px;">Скасувати</button>
         </div>
-    </div>
 
-    <div id="add-part-modal" class="modal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; padding:15px; box-sizing:border-box;">
-        <div class="modal-content" style="background: #1e1e24; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #3a3a44;">
-            <span class="close-modal-btn" id="close-add-part-modal" style="float:right; cursor:pointer; font-size:24px; color:white;">&times;</span>
-            <h2>Записати заміну деталі</h2>
-            <div class="to-form" style="display: flex; flex-direction: column; gap: 12px;">
-                <input type="text" id="part-name-input" placeholder="Назва деталі (напр., Ремінь ГРМ)">
-                <input type="number" id="part-replaced-mileage" placeholder="Пробіг, коли замінили (км)">
-                <input type="number" id="part-resource-input" placeholder="Ресурс деталі (скільки ходить км)">
-                <button id="add-part-btn" style="background-color: #74c69d; width: 100%; padding: 12px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; color: #121214;">Зберегти деталь</button>
+        <h2><i class="fas fa-tools"></i> Контроль запчастин</h2>
+        <div id="parts-list">
             </div>
-        </div>
-    </div>
-
-    <div id="parts-history-modal" class="modal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; padding:15px; box-sizing:border-box;">
-        <div class="modal-content" style="background: #1e1e24; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid #3a3a44;">
-            <span class="close-modal-btn" id="close-parts-history-modal" style="float:right; cursor:pointer; font-size:24px; color:white;">&times;</span>
-            <h2>Стан та ресурс запчастин</h2>
-            <div id="parts-list" style="margin-top: 15px;"></div>
-        </div>
-    </div>
-
-    <div id="edit-name-modal" class="modal" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; padding:15px; box-sizing:border-box;">
-        <div class="modal-content" style="background: #1e1e24; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #3a3a44;">
-            <span class="close-modal-btn" id="close-edit-name-modal" style="float:right; cursor:pointer; font-size:24px; color:white;">&times;</span>
-            <h3 style="color: white; margin-top: 0;">Змінити назву поточного авто</h3>
-            <input type="text" id="car-name-input" placeholder="Passat B5+" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #3a3a44; background: #121214; color: white; box-sizing: border-box; margin-bottom: 15px;">
-            <button id="save-car-btn" style="background-color: #74c69d; color: #121214; border: none; padding: 12px; width:100%; border-radius: 6px; font-weight: bold; cursor: pointer;">Зберегти</button>
-        </div>
     </div>
 
     <script src="script.js"></script>
