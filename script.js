@@ -1,367 +1,389 @@
 // ==========================================
-// 1. ІНІЦІАЛІЗАЦІЯ ДАНИХ ТА СТРУКТУРИ ГАРАЖА
+// 1. ІНІЦІАЛІЗАЦІЯ ДАНИХ (ГАРАЖ)
 // ==========================================
+let garage = []; 
+let currentCarId = null; 
 
-let garage = JSON.parse(localStorage.getItem('garageData')) || [
-    {
+// Посилання на елементи головного екрана
+const carNameDisplay = document.getElementById('car-name-display');
+const currentMileageDisplay = document.getElementById('current-mileage');
+const lastToMileage = document.getElementById('last-to-mileage');
+const lastToOil = document.getElementById('last-to-oil');
+const lastToCabin = document.getElementById('last-to-cabin');
+const lastToAir = document.getElementById('last-to-air');
+
+// Посилання на форми введення ТО
+const carNameInput = document.getElementById('car-name-input');
+const mileageInput = document.getElementById('mileage-input');
+const toMileageInput = document.getElementById('to-mileage-input');
+const toOilInput = document.getElementById('to-oil-input');
+const toCabinCheckbox = document.getElementById('to-cabin-checkbox');
+const toAirCheckbox = document.getElementById('to-air-checkbox');
+
+// Кнопки головного екрана
+const updateMileageBtn = document.getElementById('update-mileage-btn');
+const saveToBtn = document.getElementById('save-to-btn');
+
+// Модальні вікна (для бічного меню та зміни назви)
+const editNameModal = document.getElementById('edit-name-modal');
+const sideMenu = document.getElementById('side-menu');
+
+// Завантаження даних при відкритті сторінки
+window.addEventListener('DOMContentLoaded', function() {
+    const savedGarage = localStorage.getItem('garage');
+    const savedCurrentId = localStorage.getItem('currentCarId');
+
+    if (savedGarage) {
+        garage = JSON.parse(savedGarage);
+    }
+
+    if (garage.length === 0) {
+        const defaultCar = createNewCarObject("Моє Авто");
+        garage.push(defaultCar);
+        currentCarId = defaultCar.id;
+        saveGarageToStorage();
+    } else {
+        currentCarId = savedCurrentId ? parseInt(savedCurrentId) : garage[0].id;
+    }
+
+    renderGarageMenu();
+    loadCurrentCarData();
+});
+
+// Шаблон для створення нової машини
+function createNewCarObject(name) {
+    return {
         id: Date.now(),
-        name: "Passat B5+",
-        mileage: 180000,
-        toMileage: 180000,
-        toOil: "5W-40",
-        toCabin: false,
-        toAir: false,
-        history: [],
-        parts: []
-    }
-];
-
-let activeCarId = localStorage.getItem('activeCarId') ? Number(localStorage.getItem('activeCarId')) : (garage[0] ? garage[0].id : null);
-
-function getActiveCar() {
-    return garage.find(car => car.id === activeCarId) || garage[0];
+        name: name,
+        mileage: 0,
+        toMileage: "—",
+        toOil: "—",
+        toCabin: "—",
+        toAir: "—",
+        maintenanceHistory: [],
+        trackedParts: []
+    };
 }
 
-function saveGarage() {
-    localStorage.setItem('garageData', JSON.stringify(garage));
-    if (getActiveCar()) {
-        localStorage.setItem('activeCarId', activeCarId);
-    }
+function saveGarageToStorage() {
+    localStorage.setItem('garage', JSON.stringify(garage));
+    localStorage.setItem('currentCarId', currentCarId);
 }
 
-// ==========================================
-// 2. ФУНКЦІЯ ОНОВЛЕННЯ ІНТЕРФЕЙСУ (UI)
-// ==========================================
-function updateUI() {
-    const car = getActiveCar();
+function loadCurrentCarData() {
+    const car = garage.find(c => c.id === currentCarId);
+    if (!car) return;
+
+    if (carNameDisplay) {
+        carNameDisplay.textContent = car.name;
+    }
     
-    // Безпечно оновлюємо назву авто
-    const carNameDisplay = document.getElementById('car-name-display');
-    if (carNameDisplay) carNameDisplay.textContent = car ? car.name : "Немає авто";
+    if (currentMileageDisplay) currentMileageDisplay.textContent = car.mileage;
+    if (lastToMileage) lastToMileage.textContent = car.toMileage;
+    if (lastToOil) lastToOil.textContent = car.toOil;
+    if (lastToCabin) lastToCabin.textContent = car.toCabin;
+    if (lastToAir) lastToAir.textContent = car.toAir;
 
-    // Безпечно оновлюємо пробіг
-    const currentMileage = document.getElementById('current-mileage');
-    if (currentMileage) currentMileage.textContent = car ? car.mileage : "0";
-
-    // Безпечно оновлюємо картку ТО
-    const lastToMileage = document.getElementById('last-to-mileage');
-    const lastToOil = document.getElementById('last-to-oil');
-    const lastToCabin = document.getElementById('last-to-cabin');
-    const lastToAir = document.getElementById('last-to-air');
-
-    if (lastToMileage) lastToMileage.textContent = (car && car.toMileage) ? car.toMileage : "—";
-    if (lastToOil) lastToOil.textContent = (car && car.toOil) ? car.toOil : "—";
-    if (lastToCabin) lastToCabin.textContent = car ? (car.toCabin ? "Замінено ✅" : "Ні ❌") : "—";
-    if (lastToAir) lastToAir.textContent = car ? (car.toAir ? "Замінено ✅" : "Ні ❌") : "—";
-
-    // Запуск рендерингу списків
-    renderCarsList();
     renderHistory();
     renderParts();
 }
 
 // ==========================================
-// 3. ЛОГІКА ДЛЯ ГАРАЖА (БІЧНЕ МЕНЮ)
+// 2. БІЧНЕ МЕНЮ (ГАРАЖ)
 // ==========================================
-const sideMenu = document.getElementById('side-menu');
-const openSidebarBtn = document.getElementById('open-sidebar-btn');
-const closeSidebar = document.getElementById('close-sidebar');
-
-if (openSidebarBtn && sideMenu) {
-    openSidebarBtn.addEventListener('click', () => sideMenu.classList.add('open'));
+if (document.getElementById('open-sidebar-btn')) {
+    document.getElementById('open-sidebar-btn').addEventListener('click', () => sideMenu.style.left = '0px');
 }
-if (closeSidebar && sideMenu) {
-    closeSidebar.addEventListener('click', () => sideMenu.classList.remove('open'));
+if (document.getElementById('close-sidebar')) {
+    document.getElementById('close-sidebar').addEventListener('click', () => sideMenu.style.left = '-280px');
 }
 
-// Додавання нового авто
-const addNewCarBtn = document.getElementById('add-new-car-btn');
-const newCarNameInput = document.getElementById('new-car-name-input');
+if (document.getElementById('add-new-car-btn')) {
+    document.getElementById('add-new-car-btn').addEventListener('click', function() {
+        const input = document.getElementById('new-car-name-input');
+        if (!input || input.value.trim() === "") return;
 
-if (addNewCarBtn && newCarNameInput) {
-    addNewCarBtn.addEventListener('click', () => {
-        const name = newCarNameInput.value.trim();
-        if (!name) return alert("Введіть марку авто!");
-
-        const newCar = {
-            id: Date.now(),
-            name: name,
-            mileage: 0,
-            toMileage: 0,
-            toOil: "",
-            toCabin: false,
-            toAir: false,
-            history: [],
-            parts: []
-        };
-
+        const newCar = createNewCarObject(input.value.trim());
         garage.push(newCar);
-        activeCarId = newCar.id;
-        newCarNameInput.value = '';
-        saveGarage();
-        updateUI();
+        currentCarId = newCar.id; 
+        
+        saveGarageToStorage();
+        loadCurrentCarData();
+        renderGarageMenu();
+        
+        input.value = "";
+        sideMenu.style.left = '-280px'; 
     });
 }
 
-function renderCarsList() {
-    const carsList = document.getElementById('cars-list');
-    if (!carsList) return;
-    carsList.innerHTML = '';
-    
+function renderGarageMenu() {
+    const container = document.getElementById('cars-list');
+    if (!container) return;
+    container.innerHTML = '';
+
     garage.forEach(car => {
-        const div = document.createElement('div');
-        div.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 8px; background: #29292e; border-radius: 5px; cursor: pointer;";
-        if (car.id === activeCarId) div.style.border = "1px solid #74c69d";
+        const item = document.createElement('div');
+        item.className = `car-menu-item ${car.id === currentCarId ? 'active' : ''}`;
+        
+        item.innerHTML = `
+            <span class="car-select-click" style="flex: 1; cursor: pointer;">🚗 ${car.name}</span>
+            ${garage.length > 1 ? `<button class="delete-car-btn" onclick="deleteCar(event, ${car.id})">🗑️</button>` : ''}
+        `;
 
-        const span = document.createElement('span');
-        span.textContent = `${car.name} (${car.mileage} км)`;
-        span.addEventListener('click', () => {
-            activeCarId = car.id;
-            saveGarage();
-            updateUI();
-            if (sideMenu) sideMenu.classList.remove('open');
+        item.querySelector('.car-select-click').addEventListener('click', () => {
+            currentCarId = car.id;
+            saveGarageToStorage();
+            loadCurrentCarData();
+            renderGarageMenu();
+            sideMenu.style.left = '-280px';
         });
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = "🗑️";
-        deleteBtn.style.cssText = "background: none; border: none; cursor: pointer;";
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (confirm(`Видалити ${car.name} з гаража?`)) {
-                garage = garage.filter(c => c.id !== car.id);
-                if (activeCarId === car.id) {
-                    activeCarId = garage[0] ? garage[0].id : null;
-                }
-                saveGarage();
-                updateUI();
-            }
-        });
-
-        div.appendChild(span);
-        div.appendChild(deleteBtn);
-        carsList.appendChild(div);
+        container.appendChild(item);
     });
 }
 
-// ==========================================
-// 4. МОДАЛЬНЕ ВІКНО: РЕДАГУВАННЯ НАЗВИ
-// ==========================================
-const editCarNameBtn = document.getElementById('edit-car-name-btn');
-const editNameModal = document.getElementById('edit-name-modal');
-const carNameInput = document.getElementById('car-name-input');
-const saveCarBtn = document.getElementById('save-car-btn');
-const closeEditNameModal = document.getElementById('close-edit-name-modal');
+window.deleteCar = function(event, id) {
+    event.stopPropagation(); 
+    if (!confirm("Видалити автомобіль та всі його дані з гаража?")) return;
 
-if (editCarNameBtn && editNameModal && carNameInput) {
-    editCarNameBtn.addEventListener('click', () => {
-        const car = getActiveCar();
-        if (car) {
+    garage = garage.filter(c => c.id !== id);
+    if (currentCarId === id) {
+        currentCarId = garage[0].id;
+    }
+    saveGarageToStorage();
+    loadCurrentCarData();
+    renderGarageMenu();
+};
+
+// ==========================================
+// 3. ЗМІНА НАЗВИ АВТО
+// ==========================================
+if (document.getElementById('edit-car-name-btn')) {
+    document.getElementById('edit-car-name-btn').addEventListener('click', () => {
+        const car = garage.find(c => c.id === currentCarId);
+        if (car && carNameInput) {
             carNameInput.value = car.name;
-            editNameModal.style.display = 'block';
         }
+        if (editNameModal) editNameModal.style.display = 'flex';
     });
 }
 
-if (closeEditNameModal && editNameModal) {
-    closeEditNameModal.addEventListener('click', () => editNameModal.style.display = 'none');
+if (document.getElementById('close-edit-name-modal')) {
+    document.getElementById('close-edit-name-modal').addEventListener('click', () => editNameModal.style.display = 'none');
 }
 
-if (saveCarBtn && editNameModal && carNameInput) {
-    saveCarBtn.addEventListener('click', () => {
-        const car = getActiveCar();
+const saveCarBtn = document.getElementById('save-car-btn');
+if (saveCarBtn) {
+    saveCarBtn.addEventListener('click', function() {
         const newName = carNameInput.value.trim();
-        if (car && newName) {
-            car.name = newName;
-            saveGarage();
-            updateUI();
-            editNameModal.style.display = 'none';
+        if (newName !== "") {
+            const car = garage.find(c => c.id === currentCarId);
+            if (car) car.name = newName;
+            if (carNameDisplay) carNameDisplay.textContent = newName;
+            saveGarageToStorage();
+            renderGarageMenu();
         }
+        if (editNameModal) editNameModal.style.display = 'none';
     });
 }
 
 // ==========================================
-// 5. ОНОВЛЕННЯ ПРОБІГУ
+// 4. ОНОВЛЕННЯ ПРОБІГУ
 // ==========================================
-const updateMileageBtn = document.getElementById('update-mileage-btn');
 if (updateMileageBtn) {
-    updateMileageBtn.addEventListener('click', () => {
-        const car = getActiveCar();
-        const input = document.getElementById('mileage-input');
-        if (!input) return;
-        const newMileage = parseInt(input.value);
-
-        if (car && !isNaN(newMileage) && newMileage >= 0) {
-            car.mileage = newMileage;
-            input.value = '';
-            saveGarage();
-            updateUI();
+    updateMileageBtn.addEventListener('click', function() {
+        if (!mileageInput) return;
+        const newMileage = parseFloat(mileageInput.value);
+        if (!isNaN(newMileage) && newMileage >= 0) {
+            const car = garage.find(c => c.id === currentCarId);
+            if (car) {
+                car.mileage = newMileage;
+                if (currentMileageDisplay) currentMileageDisplay.textContent = newMileage;
+                saveGarageToStorage();
+                renderParts();
+            }
+            mileageInput.value = "";
         }
     });
 }
 
 // ==========================================
-// 6. ЗАПИС НОВОГО ТО
+// 5. ДОДАВАННЯ ТА ВИВЕДЕННЯ ТО
 // ==========================================
-const saveToBtn = document.getElementById('save-to-btn');
 if (saveToBtn) {
-    saveToBtn.addEventListener('click', () => {
-        const car = getActiveCar();
-        if (!car) return;
+    saveToBtn.addEventListener('click', function() {
+        const mileage = toMileageInput.value;
+        const oil = toOilInput.value;
+        
+        if (mileage.trim() === "" || oil.trim() === "") {
+            alert("Будь ласка, заповніть пробіг та назву мастила!");
+            return;
+        }
 
-        const toMileageInput = parseInt(document.getElementById('to-mileage-input').value);
-        const toOilInput = document.getElementById('to-oil-input').value.trim();
-        const toCabinCheckbox = document.getElementById('to-cabin-checkbox').checked;
-        const toAirCheckbox = document.getElementById('to-air-checkbox').checked;
+        const cabinStatus = (toCabinCheckbox && toCabinCheckbox.checked) ? "Замінено" : "Ні";
+        const airStatus = (toAirCheckbox && toAirCheckbox.checked) ? "Замінено" : "Ні";
 
-        if (isNaN(toMileageInput)) return alert("Введіть коректний пробіг ТО");
+        const car = garage.find(c => c.id === currentCarId);
+        if (car) {
+            car.toMileage = mileage;
+            car.toOil = oil;
+            car.toCabin = cabinStatus;
+            car.toAir = airStatus;
+            car.mileage = parseFloat(mileage); 
 
-        car.toMileage = toMileageInput;
-        car.toOil = toOilInput || "Не вказано";
-        car.toCabin = toCabinCheckbox;
-        car.toAir = toAirCheckbox;
+            const newTo = {
+                date: new Date().toLocaleDateString('uk-UA'),
+                mileage: mileage,
+                oil: oil,
+                cabin: cabinStatus,
+                air: airStatus
+            };
 
-        let works = [`Заміна мастила (${car.toOil})`];
-        if (toCabinCheckbox) works.push("Фільтр салону");
-        if (toAirCheckbox) works.push("Повітряний фільтр");
+            car.maintenanceHistory.push(newTo);
+            saveGarageToStorage();
+            loadCurrentCarData();
+        }
 
-        car.history.unshift({
-            date: new Date().toLocaleDateString('uk-UA'),
-            mileage: toMileageInput,
-            work: works.join(', ')
-        });
-
-        document.getElementById('to-mileage-input').value = '';
-        document.getElementById('to-oil-input').value = '';
-        document.getElementById('to-cabin-checkbox').checked = false;
-        document.getElementById('to-air-checkbox').checked = false;
-
-        saveGarage();
-        updateUI();
-        alert("Дані ТО успішно збережено!");
+        toMileageInput.value = "";
+        toOilInput.value = "";
+        if (toCabinCheckbox) toCabinCheckbox.checked = false;
+        if (toAirCheckbox) toAirCheckbox.checked = false;
+        
+        alert("Дані ТО збережено!");
     });
 }
 
-// ==========================================
-// 7. БЕЗПЕЧНЕ НАЛАШТУВАННЯ МОДАЛОК
-// ==========================================
-function safeModalSetup(openBtnId, modalId, closeBtnId) {
-    const openBtn = document.getElementById(openBtnId);
-    const modal = document.getElementById(modalId);
-    const closeBtn = document.getElementById(closeBtnId);
+function renderHistory() {
+    const historyList = document.getElementById('history-list');
+    if (!historyList) return;
 
-    if (openBtn && modal) {
-        openBtn.addEventListener('click', () => modal.style.display = 'block');
+    const car = garage.find(c => c.id === currentCarId);
+    if (!car || !car.maintenanceHistory || car.maintenanceHistory.length === 0) {
+        historyList.innerHTML = '<p style="color: #c4c4cc; text-align: center; padding: 10px;">Історія порожня...</p>';
+        return;
     }
-    if (closeBtn && modal) {
-        closeBtn.addEventListener('click', () => modal.style.display = 'none');
+    historyList.innerHTML = '';
+    for (let i = car.maintenanceHistory.length - 1; i >= 0; i--) {
+        const item = car.maintenanceHistory[i];
+        historyList.innerHTML += `
+            <div class="history-item" style="background: #2d2d35; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
+                <p style="color: #4ea8de; font-weight: bold; margin: 0 0 5px 0;">Дата: ${item.date}</p>
+                <p style="margin: 3px 0;"><strong>Пробіг:</strong> ${item.mileage} км</p>
+                <p style="margin: 3px 0;"><strong>Мастило:</strong> ${item.oil}</p>
+                <p style="margin: 3px 0;"><strong>Фільтр салону:</strong> ${item.cabin}</p>
+                <p style="margin: 3px 0;"><strong>Повітряний фільтр:</strong> ${item.air}</p>
+            </div>
+        `;
     }
 }
 
-// Налаштовуємо вікна (навіть якщо якогось ID немає в HTML, додаток НЕ зламається)
-safeModalSetup('open-history-btn', 'history-modal', 'close-history-modal');
-safeModalSetup('open-add-part-modal-btn', 'add-part-modal', 'close-add-part-modal');
-safeModalSetup('open-parts-history-modal-btn', 'parts-history-modal', 'close-parts-history-modal');
-
-// Закриття вікон по кліку на сірий фон навколо
-window.addEventListener('click', (e) => {
-    if (e.target.classList.contains('modal')) {
-        e.target.style.display = 'none';
-    }
-});
-
 // ==========================================
-// 8. ЗБЕРЕЖЕННЯ ДЕТАЛІ
+// 6. ЛОГІКА ТРЕКЕРА ЗАПЧАСТИН (ПРЯМО НА ЕКРАНІ)
 // ==========================================
 const addPartBtn = document.getElementById('add-part-btn');
 if (addPartBtn) {
-    addPartBtn.addEventListener('click', () => {
-        const car = getActiveCar();
-        if (!car) return;
-
+    addPartBtn.addEventListener('click', function() {
         const nameInput = document.getElementById('part-name-input');
-        const mileageInput = document.getElementById('part-replaced-mileage');
+        const replacedInput = document.getElementById('part-replaced-mileage');
         const resourceInput = document.getElementById('part-resource-input');
 
-        if (!nameInput || !mileageInput || !resourceInput) return;
+        if (!nameInput || !replacedInput || !resourceInput) return;
 
-        const name = nameInput.value.trim();
-        const replacedMileage = parseInt(mileageInput.value);
-        const resource = parseInt(resourceInput.value);
-
-        if (!name || isNaN(replacedMileage) || isNaN(resource)) return alert("Заповніть усі поля деталі!");
-
-        car.parts.unshift({ name, replacedMileage, resource });
-
-        nameInput.value = '';
-        mileageInput.value = '';
-        resourceInput.value = '';
-
-        saveGarage();
-        updateUI();
+        const name = nameInput.value;
+        const replaced = parseFloat(replacedInput.value);
+        const resource = parseFloat(resourceInput.value);
         
-        const addPartModal = document.getElementById('add-part-modal');
-        if (addPartModal) addPartModal.style.display = 'none';
+        if (name.trim() === "" || isNaN(replaced) || isNaN(resource)) {
+            alert("Будь ласка, заповніть всі поля цифрами!");
+            return;
+        }
+
+        const car = garage.find(c => c.id === currentCarId);
+        if (car) {
+            const newPart = {
+                id: Date.now(),
+                name: name,
+                replacedAt: replaced,
+                resource: resource
+            };
+            if (!car.trackedParts) car.trackedParts = [];
+            car.trackedParts.push(newPart);
+            saveGarageToStorage();
+            renderParts();
+        }
+
+        nameInput.value = "";
+        replacedInput.value = "";
+        resourceInput.value = "";
+        
+        alert(`Деталь "${name}" успішно додано!`);
     });
 }
 
-// ==========================================
-// 9. РЕНДЕРИНГ СПИСКІВ
-// ==========================================
-function renderHistory() {
-    const container = document.getElementById('history-list');
-    if (!container) return;
-    const car = getActiveCar();
-
-    if (!car || car.history.length === 0) {
-        container.innerHTML = '<p style="color: #c4c4cc;">Історія порожня...</p>';
-        return;
-    }
-
-    container.innerHTML = car.history.map(item => `
-        <div style="padding: 10px; background: #29292e; margin-bottom: 8px; border-radius: 5px;">
-            <span style="color: #74c69d; font-weight: bold;">${item.date}</span> — <strong>${item.mileage} км</strong>
-            <p style="margin: 5px 0 0 0; color: #e1e1e6;">${item.work}</p>
-        </div>
-    `).join('');
-}
-
 function renderParts() {
-    const container = document.getElementById('parts-list');
-    if (!container) return;
-    const car = getActiveCar();
+    const partsList = document.getElementById('parts-list');
+    if (!partsList) return;
 
-    if (!car || car.parts.length === 0) {
-        container.innerHTML = '<p style="color: #c4c4cc;">Жодної деталі ще не додано...</p>';
+    const car = garage.find(c => c.id === currentCarId);
+    if (!car || !car.trackedParts || car.trackedParts.length === 0) {
+        partsList.innerHTML = '<p style="color: #c4c4cc; text-align: center; padding: 10px;">Жодної деталі ще не додано...</p>';
         return;
     }
 
-    container.innerHTML = car.parts.map(part => {
-        const passed = car.mileage - part.replacedMileage;
-        const left = part.resource - passed;
-        const percent = Math.max(0, Math.min(100, (left / part.resource) * 100));
-        
-        let statusColor = "#74c69d";
-        if (percent < 20) statusColor = "#e63946";
-        else if (percent < 50) statusColor = "#ffb703";
+    partsList.innerHTML = '';
 
-        return `
-            <div style="padding: 12px; background: #29292e; margin-bottom: 10px; border-radius: 5px;">
-                <div style="display: flex; justify-content: space-between; font-weight: bold;">
-                    <span>${part.name}</span>
-                    <span style="color: ${statusColor}">${Math.round(percent)}% ресурсу</span>
-                </div>
-                <p style="margin: 5px 0; font-size: 14px; color: #c4c4cc;">
-                    Замінено на: ${part.replacedMileage} км | Пройдено: ${passed} км
-                </p>
-                <p style="margin: 0; font-size: 14px; font-weight: 500;">
-                    Залишилось ходити: <span style="color: ${statusColor}">${left > 0 ? left + ' км' : 'Потрібна заміна! ⚠️'}</span>
-                </p>
+    car.trackedParts.forEach(function(part) {
+        const nextChange = part.replacedAt + part.resource;
+        const accurateLeft = nextChange - car.mileage;
+
+        let warningStyle = '';
+        let leftText = `${accurateLeft} км`;
+
+        if (accurateLeft <= 1000) warningStyle = 'border: 1px solid #e63946; background: #2b1b20;';
+        if (accurateLeft <= 0) leftText = `ПРОСТРОЧЕНО на ${Math.abs(accurateLeft)} км! ⚠️`;
+
+        partsList.innerHTML += `
+            <div class="part-item" style="background: #2d2d35; padding: 12px; margin-bottom: 10px; border-radius: 8px; ${warningStyle}">
+                <h4 style="margin: 0 0 8px 0; color: #74c69d;">${part.name}</h4>
+                <p style="margin: 4px 0; font-size: 14px;">Замінено на пробігу: <strong>${part.replacedAt} км</strong></p>
+                <p style="margin: 4px 0; font-size: 14px;">Ресурс деталі: <strong>${part.resource} км</strong></p>
+                <p style="margin: 4px 0; font-size: 14px;">Наступна заміна на: <strong>${nextChange} км</strong></p>
+                <p style="margin: 4px 0; font-size: 14px;">Залишилось ходити: <strong style="color: ${accurateLeft <= 1000 ? '#e63946' : '#74c69d'}">${leftText}</strong></p>
+                <button class="delete-part-btn" onclick="deletePart(${part.id})" style="background: #e63946; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 8px; font-size: 12px;">Видалити запис</button>
             </div>
         `;
-    }).join('');
+    });
 }
 
+window.deletePart = function(id) {
+    if (!confirm("Видалити цю деталь з історії?")) return;
+    const car = garage.find(c => c.id === currentCarId);
+    if (car) {
+        car.trackedParts = car.trackedParts.filter(part => part.id !== id);
+        saveGarageToStorage();
+        renderParts();
+    }
+};
+
 // ==========================================
-// 10. СТАРТ
+// 7. КЕРУВАННЯ МОДАЛЬНИМИ ВІКНАМИ ТО (ОКРЕМА КНОПКА)
 // ==========================================
-updateUI();
+const historyModal = document.getElementById('history-modal');
+const openHistoryBtn = document.getElementById('open-history-btn');
+
+if (openHistoryBtn && historyModal) {
+    openHistoryBtn.addEventListener('click', () => {
+        renderHistory();
+        historyModal.style.display = 'flex';
+    });
+}
+
+const closeHistoryModal = document.getElementById('close-history-modal');
+if (closeHistoryModal && historyModal) {
+    closeHistoryModal.addEventListener('click', () => historyModal.style.display = 'none');
+}
+
+window.addEventListener('click', function(e) {
+    if (historyModal && e.target === historyModal) historyModal.style.display = 'none';
+    if (editNameModal && e.target === editNameModal) editNameModal.style.display = 'none';
+});
